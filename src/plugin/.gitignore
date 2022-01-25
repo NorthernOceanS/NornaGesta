@@ -1,0 +1,6 @@
+*
+!.gitignore
+!index.js
+!utils.js
+!nc
+!nc/**
