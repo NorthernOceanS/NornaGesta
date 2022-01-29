@@ -1,4 +1,9 @@
 import { BlockLocation, EntityQueryOptions, world } from "mojang-minecraft";
+import { 
+	ActionFormData,
+	MessageFormData,
+	ModalFormData
+} from "mojang-minecraft-ui"
 
 import { systemInstance as system, emptyPlatform, Coordinate, Position, BlockType, Direction, Block } from 'norma-core';
 import './plugin/index.js';
@@ -123,9 +128,87 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
             break;
         }
         case "show_menu": {
+            //TODO
+            let player = getPlayer(playerID)
+            // player.sendModalForm("NZ IS JULAO", "Is NZ JULAO?", "YES!", "Of course!", (player, id) => {
+            //     log(id)
+            // })
+
+            // let form=mc.newSimpleForm()
+            // form.setTitle("title")
+            // form.addButton("123")
+            // form.addButton("123")
+            // form.addButton("123")
+            // form.addButton("123")
+            // form.addButton("123")
+            // form.addButton("123")
+            // player.sendForm(form,()=>{})
+            let user = getUser(playerID)
+            let ui = user.getCurrentUI() ?? []
+
+            let form = new ModalFormData()
+            form.Title = user.getCurrentGeneratorName()
+            ui.forEach(e => {
+                switch (e["viewtype"]) {
+                    case "text": {
+                        // form.addLabel(e.text) //TODO:
+                        break;
+                    }
+                    case "button":
+                    case "checkbox": {
+                        let defaultValue = user.getCurrentState()[e.key]
+                        let defaultChoice = e.data.findIndex(choice => choice.value == defaultValue)
+                        form.dropdown(e.text, Array.from(e.data, choice => choice.text), defaultChoice == -1 ? 0 : defaultChoice)
+                        break;
+                    }
+                    case "edittext": {
+                        // form.addInput(e.text, "", user.getCurrentState()[e.key])
+                        form.textField(e.text, `Input ${typeof user.getCurrentState()[e.key]} here`, user.getCurrentState()[e.key].toString())
+                        // form.addInput(e.text,`Input number here`, user.getCurrentState()[e.key].toString())
+
+                        break;
+                    }
+                }
+            });
+            form.show(player).then(({ formValues, isCanceled }) => {
+                if (isCanceled) return
+                formValues.forEach((e, i) => {
+                    switch (ui[i]["viewtype"]) {
+                        case "text": {
+                            break;
+                        }
+                        case "button":
+                        case "checkbox": {
+                            user.getCurrentState()[ui[i].key] = ui[i].data[e].value
+                            break;
+                        }
+                        case "edittext": {
+                            // form.addInput(e.text, "", user.getCurrentState()[e.key])
+                            // form.addInput(e.text,`Input ${typeof user.getCurrentState()[e.key]} here`, user.getCurrentState()[e.key].toString())
+                            if (ui[i].inputType && ui[i].inputType == "string") user.getCurrentState()[ui[i].key] = e
+                            else if (ui[i].inputType && ui[i].inputType == "float") user.getCurrentState()[ui[i].key] = parseFloat(e)
+                            else user.getCurrentState()[ui[i].key] = parseInt(e)
+                            break;
+                        }
+                    }
+                    if (ui[i].hasOwnProperty("dataForUIHandler")) user.UIHandler(ui[i]["dataForUIHandler"])
+                })
+
+            })
             break;
         }
         case "show_meta_menu": {
+            //TODO
+            let player = getPlayer(playerID)
+            let user = getUser(playerID)
+
+            let form = new ModalFormData()
+            form.title("Meta menu")
+            form.dropdown("Choose generator:", user.getGeneratorNames(), user.getGeneratorNames().findIndex((e) => e == user.getCurrentGeneratorName()))
+            form.show(player).then( ({ formValues, isCanceled }) => {
+                if (isCanceled) return
+                user.switchGenerator(data[0])
+            })
             break;
         }
         case "run_nos": {
@@ -246,7 +329,11 @@ function displayChat(message, playerID) {
     else world.getDimension("overworld").runCommand(`say ${message}`)
 
 }
-
+function getPlayer(playerID) {
+    let EQO = new EntityQueryOptions();
+    EQO.name = playerID;
+    return [...(world.getDimension("overworld").getPlayers(EQO))][0]
+}
 function setBlock(block) {
     let blockType = block.blockType
     let position = block.position

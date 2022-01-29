@@ -13,7 +13,8 @@ module.exports = {
   },
   externalsType: 'module',
   externals: {
-    "mojang-minecraft": "mojang-minecraft"
+    "mojang-minecraft": "mojang-minecraft",
+    "mojang-minecraft-ui":"mojang-minecraft-ui"
   },
   target: "es2020"
 };
