@@ -343,7 +343,7 @@ function setBlock(block) {
     let coordinate = position.coordinate
     // STILL thank you, WavePlayz!
 
-    world.getDimension("overworld").runCommand(`/setblock ${coordinate.x} ${coordinate.y} ${coordinate.z} ${blockType.blockIdentifier.slice(blockType.blockIdentifier.indexOf(":") + 1)} [${blockType.blockState == null ? "" : JSON.stringify(blockType.blockState).slice(1, -1)}] replace`);
+    world.getDimension("overworld").runCommand(`setblock ${coordinate.x} ${coordinate.y} ${coordinate.z} ${blockType.blockIdentifier.slice(blockType.blockIdentifier.indexOf(":") + 1)} [${blockType.blockState == null ? "" : JSON.stringify(blockType.blockState).slice(1, -1)}] replace`);
     if (blockType.blockNBT) {
         //TODO:Warn that NBT is unsupported
     }
