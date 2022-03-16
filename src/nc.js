@@ -148,28 +148,31 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
 
             let form = new ModalFormData()
             form.Title = user.getCurrentGeneratorName()
-            ui.forEach(e => {
-                switch (e["viewtype"]) {
-                    case "text": {
-                        // form.addLabel(e.text) //TODO:
-                        break;
-                    }
-                    case "button":
-                    case "checkbox": {
-                        let defaultValue = user.getCurrentState()[e.key]
-                        let defaultChoice = e.data.findIndex(choice => choice.value == defaultValue)
-                        form.dropdown(e.text, Array.from(e.data, choice => choice.text), defaultChoice == -1 ? 0 : defaultChoice)
-                        break;
-                    }
-                    case "edittext": {
-                        // form.addInput(e.text, "", user.getCurrentState()[e.key])
-                        form.textField(e.text, `Input ${typeof user.getCurrentState()[e.key]} here`, user.getCurrentState()[e.key].toString())
-                        // form.addInput(e.text,`Input number here`, user.getCurrentState()[e.key].toString())
+            if (ui.length === 0) form.slider("UI is not available for this generator, so we just provide a slider for fun.",0,5,1)
+            else {
+                ui.forEach(e => {
+                    switch (e["viewtype"]) {
+                        case "text": {
+                            // form.addLabel(e.text) //TODO:
+                            break;
+                        }
+                        case "button":
+                        case "checkbox": {
+                            let defaultValue = user.getCurrentState()[e.key]
+                            let defaultChoice = e.data.findIndex(choice => choice.value == defaultValue)
+                            form.dropdown(e.text, Array.from(e.data, choice => choice.text), defaultChoice == -1 ? 0 : defaultChoice)
+                            break;
+                        }
+                        case "edittext": {
+                            // form.addInput(e.text, "", user.getCurrentState()[e.key])
+                            form.textField(e.text, `Input ${typeof user.getCurrentState()[e.key]} here`, user.getCurrentState()[e.key].toString())
+                            // form.addInput(e.text,`Input number here`, user.getCurrentState()[e.key].toString())
 
-                        break;
+                            break;
+                        }
                     }
-                }
-            });
+                });
+            }
             form.show(player).then(({ formValues, isCanceled }) => {
                 if (isCanceled) return
                 formValues.forEach((e, i) => {
