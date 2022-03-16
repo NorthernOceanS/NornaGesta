@@ -207,7 +207,7 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
             form.dropdown("Choose generator:", user.getGeneratorNames(), user.getGeneratorNames().findIndex((e) => e == user.getCurrentGeneratorName()))
             form.show(player).then( ({ formValues, isCanceled }) => {
                 if (isCanceled) return
-                user.switchGenerator(data[0])
+                user.switchGenerator(formValues[0])
             })
             break;
         }
