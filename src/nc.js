@@ -147,7 +147,7 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
             let ui = user.getCurrentUI() ?? []
 
             let form = new ModalFormData()
-            form.Title = user.getCurrentGeneratorName()
+            form.title(user.getCurrentGeneratorName())
             if (ui.length === 0) form.slider("UI is not available for this generator, so we just provide a slider for fun.",0,5,1)
             else {
                 ui.forEach(e => {
