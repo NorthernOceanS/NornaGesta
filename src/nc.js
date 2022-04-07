@@ -1,8 +1,8 @@
 import { BlockLocation, EntityQueryOptions, world } from "mojang-minecraft";
-import { 
-	ActionFormData,
-	MessageFormData,
-	ModalFormData
+import {
+    ActionFormData,
+    MessageFormData,
+    ModalFormData
 } from "mojang-minecraft-ui"
 
 import { systemInstance as system, emptyPlatform, Coordinate, Position, BlockType, Direction, Block } from 'norma-core';
@@ -148,7 +148,7 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
 
             let form = new ModalFormData()
             form.title(user.getCurrentGeneratorName())
-            if (ui.length === 0) form.slider("UI is not available for this generator, so we just provide a slider for fun.",0,5,1)
+            if (ui.length === 0) form.slider("UI is not available for this generator, so we just provide a slider for fun.", 0, 5, 1)
             else {
                 ui.forEach(e => {
                     switch (e["viewtype"]) {
@@ -208,7 +208,7 @@ function handlePlayerRequest({ requestType, playerID, additionalData }) {
             let form = new ModalFormData()
             form.title("Meta menu")
             form.dropdown("Choose generator:", user.getGeneratorNames(), user.getGeneratorNames().findIndex((e) => e == user.getCurrentGeneratorName()))
-            form.show(player).then( ({ formValues, isCanceled }) => {
+            form.show(player).then(({ formValues, isCanceled }) => {
                 if (isCanceled) return
                 user.switchGenerator(formValues[0])
             })
@@ -310,13 +310,26 @@ async function execute(playerID) {
 
         let buildInstructions = await user.generate();
         if (buildInstructions === undefined) return;
-
-        for (let buildInstruction of buildInstructions) {
-            if (!buildInstruction.hasOwnProperty("type")) setBlock(buildInstruction)
-            else {
-                let blocks = compiler[buildInstruction.type](buildInstruction.data)
-                for (let block of blocks) setBlock(block)
+        // logger.logObject("verbose", buildInstructions)
+        async function* throttler(buildInstructions) {
+            while (buildInstructions.length > 0) {
+                yield buildInstructions.splice(0, 1)[0]
+                await wait(1)
             }
+        }
+
+        for await (let buildInstruction of throttler(buildInstructions)) {
+            logger.logObject("verbose", buildInstruction)
+
+            try {
+                if (!buildInstruction.hasOwnProperty("type")) setBlock(buildInstruction)
+                else {
+                    let blocks = compiler[buildInstruction.type](buildInstruction.data)
+                    for (let block of blocks) setBlock(block)
+                }
+            }
+            catch (e) { }
+
         }
     }
 }
@@ -368,4 +381,27 @@ function loggerFactory(playerID) {
             this.log(level, JSON.stringify(object, null, '    '))
         }
     }
+}
+
+let worldTick = 0, waitQueue = new Set()
+
+world.events.tick.subscribe((event) => {
+    worldTick = event.currentTick
+    if (waitQueue.size > 0) {
+        waitQueue.forEach((e) => {
+            if (e.endTick >= worldTick) {
+                e.resolve()
+                waitQueue.delete(e)
+            }
+        })
+    }
+})
+
+async function wait(period) {
+    return new Promise((resolve, reject) => {
+        waitQueue.add({
+            resolve,
+            endTick: worldTick + period
+        })
+    })
 }
