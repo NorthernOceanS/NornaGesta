@@ -295,7 +295,7 @@ let compiler = {
         return []
     },
     setblockWithTiledata: function ({ x, y, z, blockIdentifier, tiledata }) {
-        world.getDimension("overworld").runCommand(`/setblock ${x} ${y} ${z} ${blockIdentifier.slice(blockIdentifier.indexOf(":") + 1)} ${tiledata} replace`);
+        world.getDimension("overworld").runCommand(`setblock ${x} ${y} ${z} ${blockIdentifier.slice(blockIdentifier.indexOf(":") + 1)} ${tiledata} replace`);
         return []
     }
 }
@@ -313,7 +313,7 @@ async function execute(playerID) {
         // logger.logObject("verbose", buildInstructions)
         async function* throttler(buildInstructions) {
             while (buildInstructions.length > 0) {
-                yield buildInstructions.splice(0, 1)[0]
+                yield buildInstructions.splice(0, 50)[0]
                 await wait(1)
             }
         }
