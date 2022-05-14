@@ -1,0 +1,24 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: |
+        npm install
+        grunt package
+    
+    - name: GH Release
+      uses: softprops/action-gh-release@v0.1.7
+      with:
+        files: | 
+          packaged/norna.mcpack

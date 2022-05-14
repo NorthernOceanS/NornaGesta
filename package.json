@@ -2,10 +2,16 @@
   "dependencies": {
     "@types/mojang-gametest": "^0.1.4",
     "@types/mojang-minecraft": "^0.1.4",
+    "grunt": "^1.5.3",
     "norma-core": "^0.3.1"
   },
   "devDependencies": {
-    "webpack": "^5.67.0",
+    "grunt-contrib-compress": "^2.0.0",
+    "grunt-webpack": "^5.0.0",
+    "webpack": "^5.72.1",
     "webpack-cli": "^4.9.1"
+  },
+  "scripts": {
+    "package": "grunt package"
   }
 }
