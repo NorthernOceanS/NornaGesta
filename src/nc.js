@@ -308,28 +308,39 @@ async function execute(playerID) {
     if (isVaild) {
         logger.log("info", "Now Execution started.");
 
-        let buildInstructions = await user.generate();
+        let buildInstructions
+        try {
+            buildInstructions = await user.generate();
+        }
+        catch (e) {
+            logger.logObject("error", e.message)
+            logger.logObject("error", e.stack)
+        }
         if (buildInstructions === undefined) return;
         // logger.logObject("verbose", buildInstructions)
         async function* throttler(buildInstructions) {
             while (buildInstructions.length > 0) {
-                yield buildInstructions.splice(0, 50)[0]
+                yield buildInstructions.splice(0, 50)
                 await wait(1)
             }
         }
 
-        for await (let buildInstruction of throttler(buildInstructions)) {
-            logger.logObject("verbose", buildInstruction)
+        for await (let buildInstructionBatch of throttler(buildInstructions)) {
+            for (let buildInstruction of buildInstructionBatch) {
+                logger.logObject("verbose", buildInstruction)
 
-            try {
-                if (!buildInstruction.hasOwnProperty("type")) setBlock(buildInstruction)
-                else {
-                    let blocks = compiler[buildInstruction.type](buildInstruction.data)
-                    for (let block of blocks) setBlock(block)
+                try {
+                    if (!buildInstruction.hasOwnProperty("type")) setBlock(buildInstruction)
+                    else {
+                        let blocks = compiler[buildInstruction.type](buildInstruction.data)
+                        for (let block of blocks) setBlock(block)
+                    }
+                }
+                catch (e) {
+                    logger.logObject("error", e.message)
+                    logger.logObject("error", e.stack)
                 }
             }
-            catch (e) { }
-
         }
     }
 }
