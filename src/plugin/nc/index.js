@@ -220,6 +220,7 @@ let createLineGenerator = canonicalGeneratorFactory({
                     viewtype: "edittext",
                     text: "Vertical gradient:",
                     key: "gradient",
+                    inputType: "float"
                 }
             ])
     ),
@@ -320,7 +321,7 @@ let createLineGenerator = canonicalGeneratorFactory({
     }
 })
 
-createLineGenerator.addPosition = function () {
+createLineGenerator.onAddPosition = function (e) {
     let { state, position, runtime } = e;
     if (state.doAcceptNewPosition) {
         let indexOfVacancy = state.positions.indexOf(undefined)
