@@ -10,7 +10,8 @@
   "modules": [
     {
       "description": "CBA",
-      "type": "javascript",
+      "type": "script",
+      "language": "javascript",
       "uuid": "0d5f498f-e169-4967-b234-d4498fca44e5",
       "version": [0, 0, 1],
       "entry": "scripts/index.js"
