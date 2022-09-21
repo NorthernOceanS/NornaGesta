@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "@types/mojang-gametest": "^0.1.4",
-    "@types/mojang-minecraft": "^0.1.4",
+    "@types/mojang-gametest": "^0.1.6",
+    "@types/mojang-minecraft": "^0.1.7",
     "grunt": "^1.5.3",
     "norma-core": "^0.3.1"
   },

@@ -1,4 +1,4 @@
-import { BlockLocation, EntityQueryOptions, world } from "mojang-minecraft";
+import { BlockLocation, Trigger, world } from "mojang-minecraft";
 import {
     ActionFormData,
     MessageFormData,
@@ -348,18 +348,13 @@ function displayObject(object, playerID) {
     displayChat(JSON.stringify(object, null, '    '), playerID)
 }
 function displayChat(message, playerID) {
-    if (playerID) {
-        let EQO = new EntityQueryOptions();
-        EQO.name = playerID;
-        [...(world.getDimension("overworld").getPlayers(EQO))][0].runCommand(`me ${message}`)
-    }
+    if (playerID)
+        [...(world.getDimension("overworld").getPlayers({ name: playerID }))][0].runCommand(`me ${message}`)
     else world.getDimension("overworld").runCommand(`say ${message}`)
 
 }
 function getPlayer(playerID) {
-    let EQO = new EntityQueryOptions();
-    EQO.name = playerID;
-    return [...(world.getDimension("overworld").getPlayers(EQO))][0]
+    return [...(world.getDimension("overworld").getPlayers({ name: playerID }))][0]
 }
 function setBlock(block) {
     let blockType = block.blockType
