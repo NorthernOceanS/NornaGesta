@@ -349,8 +349,8 @@ function displayObject(object, playerID) {
 }
 function displayChat(message, playerID) {
     if (playerID)
-        [...(world.getDimension("overworld").getPlayers({ name: playerID }))][0].runCommand(`me ${message}`)
-    else world.getDimension("overworld").runCommand(`say ${message}`)
+        [...(world.getDimension("overworld").getPlayers({ name: playerID }))][0].tell(message)
+    else world.say(message)
 
 }
 function getPlayer(playerID) {
