@@ -17,7 +17,7 @@ function assembleUseItemData(player, blockLocation) {
     return {
         blockType: getBlock(new Position(new Coordinate(x, y, z), dimension)),
         position: new Position({ x, y, z }, dimension),
-        direction: new Direction(-90 * player.viewVector.y, player.bodyRotation)
+        direction: new Direction(player.rotation.x, player.rotation.y)
     }
 }
 function getBlock(position) {
