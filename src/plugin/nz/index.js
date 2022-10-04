@@ -4547,7 +4547,7 @@ system.registerGenerator({
 
                 setblock(x, y + this.base_y, z, blockStr, data);    //调用NC的setBlock
 
-                this.block_list[new Vector3(x, y, z)] = new Block(id, data);
+                this.block_list[new Vector3(x, y, z)] = new myBlock(id, data);
             }
 
             setBaseY(y) {
