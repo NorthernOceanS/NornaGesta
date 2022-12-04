@@ -1,6 +1,7 @@
 name: NodeJS with Webpack
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*.*.*"
