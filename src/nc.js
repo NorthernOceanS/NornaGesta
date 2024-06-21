@@ -1,9 +1,9 @@
-import { BlockLocation, Trigger, world } from "mojang-minecraft";
+import { BlockLocation, Trigger, world } from "@minecraft/server";
 import {
     ActionFormData,
     MessageFormData,
     ModalFormData
-} from "mojang-minecraft-ui"
+} from "@minecraft/server-ui"
 
 import { systemInstance as system, emptyPlatform, Coordinate, Position, BlockType, Direction, Block } from 'norma-core';
 import './plugin/index.js';
