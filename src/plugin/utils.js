@@ -394,6 +394,7 @@ let utils = {
 	},
 	misc: {
 		generatePlayerIDFromUniqueID: function (uniqueID) {
+			throw TypeError("uniqueID unavailable in Script API.");
 			let low = uniqueID["64bit_low"] % 10000
 			let high = uniqueID["64bit_high"] % 10000
 			//hash function:

@@ -1,3 +1,5 @@
+const ADMIN_TAG = "nos";
+
 import { Trigger, world, system } from "@minecraft/server";
 import {
     ActionFormData,
@@ -38,12 +40,14 @@ systemInstance.inject({
 })
 
 world.afterEvents.playerPlaceBlock.subscribe(({ player, block, dimension }) => {
-    handlePlayerRequest({ requestType: "get_block_type", playerID: player.nameTag/*No other unique identifier available.*/, additionalData: assembleUseItemData(player, block.location, dimension.id.slice("minecraft:".length)) })
+    if (player.hasTag(ADMIN_TAG)) {
+        handlePlayerRequest({ requestType: "get_block_type", playerID: player.id, additionalData: assembleUseItemData(player, block.location, dimension.id.slice("minecraft:".length)) })
+    }
 })
 
 world.beforeEvents.itemUseOn.subscribe(({ source, itemStack: item, block }) => {
-    if (source.typeId === "minecraft:player" && item.type.id.startsWith("normaconstructor:")) {
-        handlePlayerRequest({ requestType: item.type.id.slice(item.type.id.indexOf(":") + 1), playerID: source.nameTag, additionalData: assembleUseItemData(source, block.location) })
+    if (source.hasTag(ADMIN_TAG) && item.type.id.startsWith("normaconstructor:")) {
+        handlePlayerRequest({ requestType: item.type.id.slice(item.type.id.indexOf(":") + 1), playerID: source.id, additionalData: assembleUseItemData(source, block.location) })
     }
 })
 
